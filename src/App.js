@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import './App.css';
 import TodoLists from "./Todo/todolist";
-import db from "./firebase";
-import New from "./Todo/new";
+// import db from "./firebase";
+// import New from "./Todo/new";
 const App=()=> {
   const [inputList, setInputList]=useState("");
   //array of add item list

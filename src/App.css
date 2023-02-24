@@ -209,7 +209,6 @@ ol li{
 }
 .New-class input{
   height:20px;
-  text-align:left;
   width:220px;
   color:#645fff;
   border-bottom:2px solid #645fff;
@@ -230,4 +229,26 @@ ol li{
   border:none;
   margin-left:10px;
    
+}
+
+th, td {
+  padding:20px;
+  border: 1px solid;
+}
+.table-data th{
+color:white;
+background-color:#645fff;
+}
+.table-data {
+  margin: auto;
+  left: 10px;
+  right: 0;
+  width: 90%;
+  margin-bottom:40px;
+}
+.h3-class{
+  text-align:left;
+  margin:40px 20px;
+  justify-content: center;
+  display:flex;
 }

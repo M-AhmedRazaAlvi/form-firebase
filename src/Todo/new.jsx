@@ -1,49 +1,98 @@
 import StartFirebase from './index';
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import '../App.css';
 
-import { child, ref, remove, set, update, get } from 'firebase/database';
+import { child, ref, remove, set, update, get ,onValue} from 'firebase/database';
+const db =StartFirebase();
 class New extends Component {
     constructor(props){
-        super(props);
-        this.state={db:"",
-                    username:"",                 
-                    fullname:"",                 
-                    phonenumber:"",                 
-                    dob:"" }
-          this.interface= this.interface.bind(this);}
+               super(props);
+        this.state={db:"",username:"",fullname:"",phonenumber:"", dob:"",
+                ////fatch data from firebase
+                    tableData:[]
+                }
+          this.interface= this.interface.bind(this);
+    }
     componentDidMount = () => {
              this.setState({
                 db:StartFirebase()
-             });}
+             });
+
+             ////fatch data from firebase
+             const dbref = ref(db,"data");
+             onValue(dbref,(snapshot)=>{
+               let records =[];
+               snapshot.forEach(childsnapshot=>{
+                   let keyName= childsnapshot.key;
+                   let data = childsnapshot.val();
+                   records.push({"key":keyName,"data":data}); 
+               });
+               this.setState({tableData:records});
+       
+             })
+             ////////
+            }
+            
 render() { 
         return (
             <>
                 <div className='New-class'>
                     <div className='form-data'>
                     <h1>Control</h1>
-                       <label >Enter Username :</label>
-                       <input type="text"  id ="userbox" value={this.state.username}
-                        onChange={e=>{this.setState({username:e.target.value});}}/>      
-                         <br /><br />
-                        <label >Enter Fullname :</label>
-                      <input type="text"  id ="namebox" value={this.state.fullname}
-                       onChange={e=>{this.setState({fullname:e.target.value});}}/>      
-                       <br /><br />
-                           <label >Enter PhoneNumber :</label>
-                    <input type="number"  id ="phonebox" value={this.state.phonenumber}
-                       onChange={e=>{this.setState({phonenumber:e.target.value});}}/>      
-                        <br /><br />
-                        <label >Enter DOB :</label>
-                     <input type="date"  id ="datebox" value={this.state.dob}
-                          onChange={e=>{this.setState({dob:e.target.value});}}/>      
+                    <label >First Name :</label>
+                            <input type="text"  id ="userbox" value={this.state.username}
+                            placeholder="enter fisrtname"
+                            onChange={e=>{this.setState({username:e.target.value});}}/>      
+                            <br /><br />
+                    <label >Last Name:</label>
+                            <input type="text"  id ="namebox" value={this.state.fullname}
+                            placeholder="enter lastname"
+                            onChange={e=>{this.setState({fullname:e.target.value});}}/>      
+                            <br /><br />
+                    <label >PhoneNumber :</label>
+                           <input type="number"  id ="phonebox" value={this.state.phonenumber}
+                            placeholder="enter phonenumber"
+                            onChange={e=>{this.setState({phonenumber:e.target.value});}}/>      
+                            <br /><br />
+                    <label >DOB :</label>
+                            <input type="date"  id ="datebox" value={this.state.dob}
+                             placeholder="select date"
+                            onChange={e=>{this.setState({dob:e.target.value});}}/>      
                             <br /><br />   
                        <button id='addBtn' onClick={this.interface}>add data</button>                          
                        <button id='updataBtn' onClick={this.interface}>Update data</button>                          
                        <button id='deleteBtn' onClick={this.interface}>Delete data</button>                          
                        <button id='selectBtn' onClick={this.interface}>Select data</button>
                     </div>
-                </div>                          
+                </div>  
+                <div>
+                    <h3 className='h3-class'> Data fatch from the firebase</h3>
+                        <table className='table-data'>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Username</th>
+                                        <th>Fullname</th>
+                                        <th>Phone Number</th>
+                                        <th>Date of Birth</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {this.state.tableData.map((rowd,index)=>{
+                                        return(
+                                            <tr>
+                                                <td>{index}</td>
+                                                <td>{rowd.key}</td>
+                                                <td>{rowd.data.fullname}</td>
+                                                <td>{rowd.data.phonenumber }</td>
+                                                <td>{rowd.data.dataofbirth}</td>
+
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                           </table>
+                </div>                        
             </>
         );
     }
@@ -69,17 +118,25 @@ render() {
             dob:this.state.dob,
         }
     }
-
+    allInputs(){
+        return {
+            username:"",
+            name:"",
+            phone:"",
+            dob:""
+        }
+    }
     insertData(){
         const db = this.state.db;
         const data = this.getAllInputs();
+      
         set(ref(db, "data/"+data.username ),{
             fullname:data.name,
             phonenumber:data.phone,
             dataofbirth:data.dob,
         }).then(()=>{alert("date was added seccessfully!")})
         .catch((error)=>{alert("erorr somthing"+error)});
-
+          
     }
     updateData(){
         const db = this.state.db;
